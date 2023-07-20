@@ -1,7 +1,7 @@
 # MTGRank
 ![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11-blue)  
 ---  
-A Magic: The Gathering format archetype ranking based on TOP 8 tournaments results.
+A Magic: The Gathering format archetype ranking tool based on TOP 8 tournaments results.
 
 ## Features
 
