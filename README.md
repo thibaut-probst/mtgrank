@@ -5,7 +5,7 @@ A Magic: The Gathering format archetype ranking tool based on TOP 8 tournaments 
 
 ## Features
 
-* Support of [MTGTOP8](https://mtgtop8.com), [MTGDECKS](https://mtgdecks.net) and [MTGGOLDFISH](https://www.mtggoldfish.com) as tournaments data sources.
+* Support of [MTGTOP8](https://mtgtop8.com), [MTGDECKS](https://mtgdecks.net) and [MTGGOLDFISH](https://www.mtggoldfish.com) as tournament data sources.
 * Support of 3 formats: Modern, Legacy and Pioneer.
 * Support of 2 ranking algorithms:
     * Linear: each TOP8 member gets ( (9-n) * nb_players / 8 ) pts, where n is the rank;
