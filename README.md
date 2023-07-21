@@ -11,7 +11,8 @@ A Magic: The Gathering format archetype ranking tool based on TOP 8 tournaments 
     * Linear: each TOP8 member gets ( (9-n) * nb_players / 8 ) pts, where n is the rank;
     * Exponential: TOP1 gets (8 * nb_players / 8) pts, TOP2 gets (4 * nb_players / 8) pts, TOP3-4 get (2 * nb_players / 8) pts, TOP5-8 get (1 * nb_players / 8) pts
 * Support of 4 possible time ranges options for analysis: last 2 weeks, last 2 months, since beginning of the year or since specific date.
-* Support of a progress bar during tool execution.
+* Support of selection of paper only events or online only events or both.
+* Progress bar during tool execution.
 
 ## Requirements
 
@@ -35,7 +36,7 @@ You can display ***MTGRank*** startup parameters information by using the --help
 
 ```
 $ python3 mtgrank.py -h
-usage: mtgrank.py [-h] [--source SOURCE] [--format FORMAT] [--algorithm ALGORITHM] [--top TOP] [--date]
+usage: mtgrank.py [-h] [--source SOURCE] [--format FORMAT] [--algorithm ALGORITHM] [--top TOP] [--date] [--paper | --online]
 
 options:
   -h, --help            show this help message and exit
@@ -49,34 +50,36 @@ options:
                             Exponential: TOP1 gets (8 * nb_players / 8) pts, TOP2 gets (4 * nb_players / 8) pts, TOP3-4 get (2 * nb_players / 8) pts, TOP5-8 get (1 * nb_players / 8) pts
   --top TOP, -t TOP     TOP ranking size (default: 20)
   --date, -d            Time range to be specified through a selection menu (default: last 2 weeks)
+  --paper, -p           Only analyze paper events
+  --online, -o          Only analyze online events
 ```
 
 ## Examples
 ```
 $ python3 mtgrank.py 
 
-TOP 20 Modern archetypes over the last 2 weeks based on MTGTOP8 and using exponential ranking algorithm
+TOP 20 Modern archetypes over the last 2 weeks based on MTGTOP8 for both paper and online events and using exponential ranking algorithm
 
-1 - Rakdos - 159 pts - 59 times TOP8
-2 - 4cc - 105 pts - 46 times TOP8
-3 - Living End - 96 pts - 31 times TOP8
-4 - Creativity - 81 pts - 25 times TOP8
-5 - UR Murktide - 66 pts - 29 times TOP8
-6 - Tron - 65 pts - 26 times TOP8
-7 - Burn - 55 pts - 18 times TOP8
-8 - Yawgmoth Evolution - 54 pts - 17 times TOP8
-9 - Amulet Titan - 53 pts - 17 times TOP8
-10 - Hammer Time - 52 pts - 22 times TOP8
-11 - Mono Black Control - 33 pts - 12 times TOP8
-12 - Trash for Treasure - 33 pts - 5 times TOP8
-13 - Death's Shadow - 31 pts - 16 times TOP8
-14 - Cascade Crash - 29 pts - 15 times TOP8
-15 - Breach - 26 pts - 12 times TOP8
-16 - RDW - 26 pts - 7 times TOP8
-17 - Jund - 24 pts - 7 times TOP8
-18 - Hardened Scales - 22 pts - 5 times TOP8
-19 - Merfolk - 21 pts - 8 times TOP8
-20 - The Underworld Cookbook - 18 pts - 7 times TOP8 
+1 - Rakdos - 904 pts - 67 times TOP8
+2 - Amulet Titan - 769 pts - 17 times TOP8
+3 - Yawgmoth Evolution - 468 pts - 21 times TOP8
+4 - Tron - 433 pts - 27 times TOP8
+5 - 4cc - 391 pts - 44 times TOP8
+6 - UR Murktide - 250 pts - 29 times TOP8
+7 - Living End - 230 pts - 30 times TOP8
+8 - Burn - 192 pts - 17 times TOP8
+9 - Hammer Time - 183 pts - 23 times TOP8
+10 - Creativity - 177 pts - 24 times TOP8
+11 - Mono Black Control - 158 pts - 12 times TOP8
+12 - RDW - 106 pts - 7 times TOP8
+13 - Grixis Death's Shadow - 83 pts - 18 times TOP8
+14 - Breach - 73 pts - 12 times TOP8
+15 - The Underworld Cookbook - 56 pts - 7 times TOP8
+16 - Hardened Scales - 49 pts - 5 times TOP8
+17 - Cascade Crash - 45 pts - 17 times TOP8
+18 - Urza - 42 pts - 2 times TOP8
+19 - 5c Domain - 40 pts - 1 times TOP8
+20 - Trash for Treasure - 33 pts - 5 times TOP8
 ```
 ```
 $ python3 mtgrank.py -s mtggoldfish -d
@@ -84,72 +87,73 @@ Select time range:
         1 Last 2 weeks
         2 Last 2 months
         3 Since beginning of the year
- [1/2/3]: 2
+        4 Since specific date
+ [1/2/3/4]: 2
 
-TOP 20 Modern archetypes over the last 2 months based on MTGGOLDFISH and using exponential ranking algorithm
+TOP 20 Modern archetypes over the last 2 months based on MTGGOLDFISH for both paper and online events and using exponential ranking algorithm
 
-1 - Rakdos - 261 pts - 110 times TOP8
-2 - Creativity - 258 pts - 102 times TOP8
-3 - UR Murktide - 258 pts - 93 times TOP8
-4 - 4cc - 210 pts - 77 times TOP8
-5 - Living End - 201 pts - 71 times TOP8
-6 - Tron - 139 pts - 53 times TOP8
-7 - Yawgmoth Evolution - 135 pts - 45 times TOP8
-8 - Hammer Time - 120 pts - 53 times TOP8
-9 - Burn - 116 pts - 49 times TOP8
-10 - Crashing Footfalls - 115 pts - 43 times TOP8
-11 - Generic Ragavan - 91 pts - 28 times TOP8
-12 - Amulet Titan - 87 pts - 30 times TOP8
-13 - Dimir Control - 44 pts - 14 times TOP8
-14 - Domain Zoo - 44 pts - 21 times TOP8
-15 - Simic Hardened Scales - 39 pts - 9 times TOP8
-16 - Jund - 38 pts - 9 times TOP8
-17 - Mill - 34 pts - 11 times TOP8
-18 - Grinding Station - 33 pts - 10 times TOP8
-19 - Temur Cascade - 32 pts - 9 times TOP8
-20 - Grixis Death's Shadow - 30 pts - 15 times TOP8
+1 - 4cc - 1304 pts - 86 times TOP8
+2 - Rakdos - 1294 pts - 115 times TOP8
+3 - Creativity - 1215 pts - 101 times TOP8
+4 - UR Murktide - 1021 pts - 95 times TOP8
+5 - Living End - 871 pts - 71 times TOP8
+6 - Amulet Titan - 868 pts - 30 times TOP8
+7 - Tron - 790 pts - 52 times TOP8
+8 - Yawgmoth Evolution - 552 pts - 48 times TOP8
+9 - Hammer Time - 541 pts - 53 times TOP8
+10 - Burn - 442 pts - 49 times TOP8
+11 - Grixis Death's Shadow - 306 pts - 29 times TOP8
+12 - Crashing Footfalls - 250 pts - 45 times TOP8
+13 - Temur Cascade - 223 pts - 9 times TOP8
+14 - Jund - 186 pts - 9 times TOP8
+15 - Generic Ragavan - 184 pts - 28 times TOP8
+16 - Four-color Midrange - 172 pts - 4 times TOP8
+17 - All Other Decklists - 170 pts - 5 times TOP8
+18 - Lantern - 150 pts - 7 times TOP8
+19 - Domain Zoo - 138 pts - 21 times TOP8
+20 - Mill - 132 pts - 11 times TOP8
 ```
 ```
 $ python3 mtgrank.py -f legacy -a linear -t 10
 
-TOP 10 Legacy archetypes over the last 2 weeks based on MTGTOP8 and using linear ranking algorithm
+TOP 10 Legacy archetypes over the last 2 weeks based on MTGTOP8 for both paper and online events and using linear ranking algorithm
 
-1 - Grixis Delver - 131 pts - 30 times TOP8
-2 - Death's Shadow - 111 pts - 18 times TOP8
-3 - Painter - 98 pts - 22 times TOP8
-4 - Lands - 82 pts - 14 times TOP8
-5 - Death & Taxes - 80 pts - 13 times TOP8
-6 - Dragon Stompy - 77 pts - 13 times TOP8
-7 - Reanimator - 76 pts - 16 times TOP8
-8 - 4cc - 70 pts - 10 times TOP8
-9 - Grixis Aggro - 44 pts - 7 times TOP8
-10 - Initiative Stompy - 43 pts - 10 times TOP8
+1 - Grixis Death's Shadow - 764 pts - 36 times TOP8
+2 - Reanimator - 502 pts - 16 times TOP8
+3 - Grixis Delver - 368 pts - 28 times TOP8
+4 - Painter - 312 pts - 20 times TOP8
+5 - 4cc - 247 pts - 8 times TOP8
+6 - 8-Cast - 228 pts - 4 times TOP8
+7 - Lands - 221 pts - 13 times TOP8
+8 - Initiative Stompy - 204 pts - 10 times TOP8
+9 - Sneak Show - 161 pts - 4 times TOP8
+10 - Cradle Control - 159 pts - 5 times TOP8
 ```
 ```
 $ python3 mtgrank.py -f pioneer -s mtgdecks
 
-TOP 20 Pioneer archetypes over the last 2 weeks based on MTGDECKS and using exponential ranking algorithm
+TOP 20 Pioneer archetypes over the last 2 weeks based on MTGDECKS for both paper and online events and using exponential ranking algorithm
 
-1 - Rakdos - 174 pts - 74 times TOP8
-2 - Green Devotion - 160 pts - 57 times TOP8
-3 - Azorius Control - 70 pts - 23 times TOP8
-4 - Creativity - 67 pts - 29 times TOP8
-5 - Mono White Humans - 66 pts - 22 times TOP8
-6 - Boros Prowess - 41 pts - 17 times TOP8
-7 - Abzan Greasefang - 38 pts - 13 times TOP8
-8 - Lotus Field Combo - 36 pts - 15 times TOP8
-9 - Azorius Spirits - 31 pts - 16 times TOP8
-10 - WU Control - 27 pts - 9 times TOP8
-11 - Boros Convoke - 25 pts - 11 times TOP8
-12 - BR Aggro - 25 pts - 11 times TOP8
-13 - Parhelion Shoot - 24 pts - 9 times TOP8
-14 - Enigmatic Incarnatio... - 22 pts - 9 times TOP8
-15 - Goblins - 21 pts - 4 times TOP8
-16 - Izzet Phoenix - 16 pts - 7 times TOP8
-17 - RG Aggro - 16 pts - 5 times TOP8
-18 - Red Deck Wins - 16 pts - 6 times TOP8
-19 - Mardu Sacrifice - 15 pts - 6 times TOP8
-20 - Jund Transmogrify - 14 pts - 3 times TOP8
+1 - Rakdos - 511 pts - 73 times TOP8
+2 - Green Devotion - 411 pts - 54 times TOP8
+3 - Azorius Spirits - 261 pts - 16 times TOP8
+4 - Mono White Humans - 190 pts - 20 times TOP8
+5 - Creativity - 169 pts - 26 times TOP8
+6 - Azorius Control - 134 pts - 23 times TOP8
+7 - Mono-White Humans - 129 pts - 5 times TOP8
+8 - Boros Convoke - 108 pts - 11 times TOP8
+9 - Atarka Red - 106 pts - 3 times TOP8
+10 - Enigmatic Incarnatio... - 94 pts - 8 times TOP8
+11 - BR Aggro - 93 pts - 11 times TOP8
+12 - WU Control - 75 pts - 8 times TOP8
+13 - Red Deck Wins - 69 pts - 6 times TOP8
+14 - Gruul Vehicles - 69 pts - 6 times TOP8
+15 - Gruul Aggro - 65 pts - 5 times TOP8
+16 - Boros Prowess - 48 pts - 15 times TOP8
+17 - Uw Lotus Field Contr... - 48 pts - 1 times TOP8
+18 - Mono green  - 48 pts - 1 times TOP8
+19 - Five-color Niv-Mizze... - 48 pts - 1 times TOP8
+20 - Abzan Greasefang - 47 pts - 11 times TOP8
 ```
 ```
 $ python3 mtgrank.py -d 
@@ -162,26 +166,79 @@ Select time range:
 Enter date (dd-mm-yyyy):
 : 23-06-2023
 
-TOP 20 Modern archetypes since 23-06-2023 based on MTGTOP8 and using exponential ranking algorithm
+TOP 20 Modern archetypes since 23-06-2023 based on MTGTOP8 for both paper and online events and using exponential ranking algorithm
 
-1 - 4cc - 1393 pts - 84 times TOP8
-2 - Rakdos - 1331 pts - 97 times TOP8
-3 - Amulet Titan - 887 pts - 34 times TOP8
-4 - Living End - 775 pts - 66 times TOP8
-5 - Yawgmoth Evolution - 727 pts - 34 times TOP8
-6 - Creativity - 709 pts - 48 times TOP8
-7 - Tron - 592 pts - 48 times TOP8
-8 - Hammer Time - 578 pts - 48 times TOP8
-9 - UR Murktide - 555 pts - 51 times TOP8
-10 - Burn - 267 pts - 30 times TOP8
-11 - Temur Cascade - 196 pts - 9 times TOP8
-12 - Mono Black Control - 174 pts - 16 times TOP8
-13 - Death's Shadow - 171 pts - 25 times TOP8
-14 - Cascade Crash - 127 pts - 25 times TOP8
-15 - Breach - 121 pts - 26 times TOP8
+1 - 4cc - 1489 pts - 102 times TOP8
+2 - Rakdos - 1350 pts - 109 times TOP8
+3 - Amulet Titan - 902 pts - 38 times TOP8
+4 - Living End - 889 pts - 72 times TOP8
+5 - Creativity - 765 pts - 60 times TOP8
+6 - Yawgmoth Evolution - 750 pts - 39 times TOP8
+7 - UR Murktide - 637 pts - 69 times TOP8
+8 - Tron - 622 pts - 55 times TOP8
+9 - Hammer Time - 596 pts - 52 times TOP8
+10 - Burn - 293 pts - 35 times TOP8
+11 - Cascade Crash - 235 pts - 32 times TOP8
+12 - Grixis Death's Shadow - 207 pts - 33 times TOP8
+13 - Temur Cascade - 196 pts - 9 times TOP8
+14 - Mono Black Control - 174 pts - 16 times TOP8
+15 - Breach - 138 pts - 29 times TOP8
 16 - RDW - 108 pts - 8 times TOP8
-17 - UW Control - 92 pts - 16 times TOP8
-18 - Creatures Toolbox - 68 pts - 11 times TOP8
-19 - The Underworld Cookbook - 66 pts - 11 times TOP8
-20 - Merfolk - 63 pts - 14 times TOP8
+17 - UW Control - 94 pts - 17 times TOP8
+18 - UR Aggro - 78 pts - 5 times TOP8
+19 - 4/5c Aggro - 77 pts - 10 times TOP8
+20 - Merfolk - 76 pts - 17 times TOP8
+
+```
+```
+$ python3 mtgrank.py -p 
+
+TOP 20 Modern archetypes over the last 2 weeks based on MTGTOP8 for paper only events and using exponential ranking algorithm
+
+1 - Rakdos - 825 pts - 35 times TOP8
+2 - Amulet Titan - 746 pts - 10 times TOP8
+3 - Yawgmoth Evolution - 425 pts - 9 times TOP8
+4 - Tron - 401 pts - 17 times TOP8
+5 - 4cc - 352 pts - 26 times TOP8
+6 - Living End - 216 pts - 24 times TOP8
+7 - UR Murktide - 212 pts - 15 times TOP8
+8 - Hammer Time - 175 pts - 19 times TOP8
+9 - Burn - 169 pts - 9 times TOP8
+10 - Creativity - 153 pts - 14 times TOP8
+11 - Mono Black Control - 146 pts - 5 times TOP8
+12 - RDW - 90 pts - 2 times TOP8
+13 - Grixis Death's Shadow - 69 pts - 7 times TOP8
+14 - The Underworld Cookbook - 52 pts - 5 times TOP8
+15 - Breach - 50 pts - 2 times TOP8
+16 - 5c Domain - 40 pts - 1 times TOP8
+17 - Urza - 34 pts - 1 times TOP8
+18 - Hardened Scales - 32 pts - 2 times TOP8
+19 - Trash for Treasure - 32 pts - 4 times TOP8
+20 - Dredge - 30 pts - 2 times TOP8
+```
+```
+$ python3 mtgrank.py -s mtgdecks -o
+
+TOP 20 Modern archetypes over the last 2 weeks based on MTGDECKS for online only events and using exponential ranking algorithm
+
+1 - Rakdos - 83 pts - 28 times TOP8
+2 - Dimir Bowmasters - 43 pts - 13 times TOP8
+3 - Yawgmoth Evolution - 40 pts - 10 times TOP8
+4 - 4cc - 33 pts - 15 times TOP8
+5 - Burn - 32 pts - 13 times TOP8
+6 - Tron - 30 pts - 10 times TOP8
+7 - UR Murktide - 23 pts - 11 times TOP8
+8 - Temur Cascade - 21 pts - 6 times TOP8
+9 - Creativity - 17 pts - 6 times TOP8
+10 - Mono Black Coffers - 16 pts - 6 times TOP8
+11 - Amulet Titan - 14 pts - 5 times TOP8
+12 - Mill - 12 pts - 4 times TOP8
+13 - Jund Saga - 10 pts - 3 times TOP8
+14 - Living End - 10 pts - 6 times TOP8
+15 - 4 Color Cascade - 10 pts - 5 times TOP8
+16 - Grixis Death's Shadow - 9 pts - 8 times TOP8
+17 - Bant Control - 8 pts - 1 times TOP8
+18 - Orzhov Blink - 8 pts - 1 times TOP8
+19 - Jeskai Breach - 8 pts - 5 times TOP8
+20 - Hammer Time - 7 pts - 3 times TOP8
 ```

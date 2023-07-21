@@ -127,7 +127,7 @@ def crawl_event(url, mtg_source, mtg_format, algo):
     return deck_ranking
 
 
-def crawl_source(url, mtg_source, mtg_format, mtgdecks_date, algo):
+def crawl_source(url, mtg_source, mtg_format, mtgdecks_date, paper_online_or_both, algo):
     '''
     MTG source crawling function
         
@@ -136,6 +136,7 @@ def crawl_source(url, mtg_source, mtg_format, mtgdecks_date, algo):
                 mtg_source (str): MTG data source
                 mtg_format (str): MTG format
                 mtgdecks_date (datetime.date): date to look up to
+                paper_online_or_both (str): type of events to analyze (paper, online or both)
                 algo (str): ranking algorithm
             Returns:
                 global_deck_ranking (dict): global deck ranking
@@ -257,7 +258,15 @@ def crawl_source(url, mtg_source, mtg_format, mtgdecks_date, algo):
                         if ((mtg_source == 'mtgtop8') and href.startswith('event?e=') and href.endswith(f'={mtg_format.lower()[0:2]}') and ((link.text not in events_before_date))) \
                             or ((mtg_source == 'mtgdecks') and href.startswith(f'/{mtg_format}/') and (not href.startswith(f'/{mtg_format}/tournaments')) and (not href.startswith(f'/{mtg_format}/staples')) and (not href.startswith(f'/{mtg_format}/winrates')) and ((link.text not in events_before_date)))\
                             or ((mtg_source == 'mtggoldfish') and href.startswith('/tournament/')):
-                                events.append(href)
+                                if (mtg_source == 'mtgtop8') or (mtg_source == 'mtgdecks'):
+                                    if (paper_online_or_both == 'paper') and (not link.text.startswith('MTGO')):
+                                        events.append(href)
+                                    elif (paper_online_or_both == 'online') and (link.text.startswith('MTGO')):
+                                        events.append(href)
+                                    elif (paper_online_or_both == 'both'):
+                                        events.append(href)
+                                else:
+                                    events.append(href)
                 
                 deck_ranking_event = {}
 
@@ -345,6 +354,20 @@ if __name__ == '__main__':
         help = 'Time range to be specified through a selection menu (default: last 2 weeks)'
     )
 
+    paper_online = parser.add_mutually_exclusive_group()
+
+    paper_online.add_argument(
+        '--paper', '-p',
+        action = 'store_true',
+        help = 'Only analyze paper events'
+    )
+    
+    paper_online.add_argument(
+        '--online', '-o',
+        action = 'store_true',
+        help = 'Only analyze online events'
+    )
+
     args = vars(parser.parse_args())
 
     mtg_source = args['source']
@@ -371,6 +394,25 @@ if __name__ == '__main__':
     if size < 1:
         print(f'{size} must be positive')
         exit()
+
+    paper = args['paper']
+    online = args['online']
+    paper_online_or_both = 'both'
+    paper_online_both_str = 'both paper and online events'
+    if paper:
+        if (mtg_source == 'mtggoldfish'):
+            print(f'The --paper/-p argument is not yet supported for MTGGOLDFISH.')
+            exit()
+        else:
+            paper_online_or_both = 'paper'
+            paper_online_both_str = 'paper only events'
+    elif online:
+        if (mtg_source == 'mtggoldfish'):
+            print(f'The --online/-o argument is not yet supported for MTGGOLDFISH.')
+            exit()
+        else:
+            paper_online_or_both = 'online'
+            paper_online_both_str = 'online only events'
 
     date_selection = args['date']
 
@@ -448,10 +490,10 @@ if __name__ == '__main__':
         case 'mtggoldfish':
             base_url = f'https://www.mtggoldfish.com/tournament_searches/create?utf8=%E2%9C%93&tournament_search%5Bname%5D=&tournament_search%5Bformat%5D={mtg_format}&tournament_search%5Bdate_range%5D={mtggoldfishdate}&commit=Search&page='
 
-    decks = crawl_source(base_url, mtg_source, mtg_format, mtgdecks_date, ranking_algo)
+    decks = crawl_source(base_url, mtg_source, mtg_format, mtgdecks_date, paper_online_or_both, ranking_algo)
 
     # Printing of results
-    print(f'TOP {size} {mtg_format.capitalize()} archetypes {time_str} based on {mtg_source.upper()} and using {ranking_algo} ranking algorithm\n')
+    print(f'TOP {size} {mtg_format.capitalize()} archetypes {time_str} based on {mtg_source.upper()} for {paper_online_both_str} and using {ranking_algo} ranking algorithm\n')
 
     top_decks = sorted(decks.items(), key=lambda x:x[1][0], reverse=True)[0:size]
     for deck in top_decks:
