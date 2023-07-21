@@ -11,6 +11,7 @@ A Magic: The Gathering format archetype ranking tool based on TOP 8 tournaments 
     * Linear: each TOP8 member gets ( (9-n) * nb_players / 8 ) pts, where n is the rank;
     * Exponential: TOP1 gets (8 * nb_players / 8) pts, TOP2 gets (4 * nb_players / 8) pts, TOP3-4 get (2 * nb_players / 8) pts, TOP5-8 get (1 * nb_players / 8) pts
 * Support of 4 possible time ranges options for analysis: last 2 weeks, last 2 months, since beginning of the year or since specific date.
+* Support of a progress bar during tool execution.
 
 ## Requirements
 
