@@ -35,7 +35,24 @@ def crawl_event(url, mtg_source, mtg_format, algo):
 
         # Process the HTML content
         links = soup.find_all('a')
-        rank = 1
+
+        # Look for the number of players in the tournament, if not found set it to 8
+        nb_players = 8
+
+        if (mtg_source == 'mtgtop8'):
+            nb_players_regex = compile('([0-9]+) players')
+        elif mtg_source == 'mtgdecks':
+            nb_players_regex = compile('([0-9]+) Players')
+        elif mtg_source == 'mtggoldfish':
+            if 'Displaying <b>all' in response.text:
+                nb_players_regex = compile('Displaying <b>all&nbsp;([0-9]+)<\/b> decks')
+            else:
+                nb_players_regex = compile(' of <b>([0-9]+)<\/b> in total')
+
+        try:
+            nb_players = int(nb_players_regex.findall(response.text)[0])
+        except:
+            pass
 
         decks = []
         for link in links:
@@ -54,7 +71,7 @@ def crawl_event(url, mtg_source, mtg_format, algo):
                                 txt = 'Creativity'
                             elif 'Affinity' in txt:
                                 txt = 'Affinity'
-                            elif 'Murktid' in txt:
+                            elif 'urktid' in txt:
                                 txt = 'UR Murktide'
                             elif 'Mill' in txt:
                                 txt = 'Mill'
@@ -88,15 +105,15 @@ def crawl_event(url, mtg_source, mtg_format, algo):
         # Points calculation according to algorithm
         if algo == 'exponential':
             if deck_pos == 1:
-                pts = 8
+                pts = 8 * int(round(nb_players / 8, 0))
             elif deck_pos == 2:
-                pts = 4
+                pts = 4 * int(round(nb_players / 8, 0))
             elif (deck_pos == 3) or (deck_pos == 4):
-                pts = 2
+                pts = 2 * int(round(nb_players / 8, 0))
             elif deck_pos > 4:
-                pts = 1
+                pts = 1 * int(round(nb_players / 8, 0))
         elif algo == 'linear':
-            pts = 9-deck_pos
+            pts = (9-deck_pos) * int(round(nb_players / 8, 0))
 
         if deck not in deck_ranking.keys():
             deck_ranking[deck] = [pts, 1]
@@ -162,15 +179,15 @@ def crawl_source(url, mtg_source, mtg_format, mtgdecks_date, algo):
                 soup = BeautifulSoup(body, 'html.parser')
 
                 # Estimate progress
+
+                events_before_date = []
                 # For MTGDECKS, check event dates but also not to parse events over time range
                 if mtg_source == 'mtgdecks':
-                    events_before_date = []
                     event_dates = soup.find_all('strong') # Dates are within strong HTML elements
                     oldest_event_date = None
                     event_before_date = False
                     for event_date_raw in event_dates: 
                         if ('-' in event_date_raw.text) and (len(event_date_raw.text) < 7): # Only keep dates
-                            event_date_raw.text
                             event_date = datetime.strptime(event_date_raw.text, '%d-%b').replace(year=datetime.now().year)
                             if event_date < mtgdecks_date:
                                 event_before_date = True
@@ -185,15 +202,34 @@ def crawl_source(url, mtg_source, mtg_format, mtgdecks_date, algo):
 
                 # For MTGTOP8, check event dates
                 elif mtg_source == 'mtgtop8':
-                    date_regex = compile('[0-9]{2}/[0-9]{2}/[0-9]{2}')
-                    matched_dates = soup.find_all(string=date_regex)
-                    oldest_event_date_str = matched_dates[-1].string # Keep oldest event date
-                    oldest_event_date = datetime.strptime(oldest_event_date_str, '%d/%m/%y') # Take last event date of the page
-                    new_period = previous_date - oldest_event_date # Calculate new progress
-                    period_progress = round((new_period / total_period) * 100, 0)
-                    previous_date = oldest_event_date
+                    # Specific date provided, check event dates but also not to parse events over time range
+                    if '&meta=44' in url:
+                        event_dates = compile('[0-9]+\/[0-9]+\/[0-9]+').findall(body) # Dates are within strong HTML elements
+                        oldest_event_date = None
+                        event_before_date = False
+                        for event_date_raw in event_dates: 
+                            event_date = datetime.strptime(event_date_raw, '%d/%m/%y')
+                            if event_date < mtgdecks_date:
+                                event_before_date = True
+                            if event_before_date:
+                                events_before_date.append(event_date_raw)
+                            else:
+                                oldest_event_date = event_date # Keep oldest event date
+                        if oldest_event_date:       
+                            new_period = previous_date - oldest_event_date # Calculate new progress
+                            period_progress = round((new_period / total_period) * 100, 0)
+                            previous_date = oldest_event_date
+                    # Else just check event dates
+                    else:
+                        date_regex = compile('[0-9]{2}/[0-9]{2}/[0-9]{2}')
+                        matched_dates = soup.find_all(string=date_regex)
+                        oldest_event_date_str = matched_dates[-1].string # Keep oldest event date
+                        oldest_event_date = datetime.strptime(oldest_event_date_str, '%d/%m/%y') # Take last event date of the page
+                        new_period = previous_date - oldest_event_date # Calculate new progress
+                        period_progress = round((new_period / total_period) * 100, 0)
+                        previous_date = oldest_event_date
                 
-                # For MTGTOP8, check event dates
+                # For MTGGOLDFISH, check event dates
                 elif mtg_source == 'mtggoldfish':
                     date_regex = compile('[0-9]{4}-[0-9]{2}-[0-9]{2}')
                     matched_dates = soup.find_all(string=date_regex)
@@ -216,9 +252,9 @@ def crawl_source(url, mtg_source, mtg_format, mtgdecks_date, algo):
                     if href:
                         href = href.lower()
                         # Only keep event links
-                        if ((mtg_source == 'mtgtop8') and (href.startswith('event?e=') and href.endswith(f'={mtg_format.lower()[0:2]}'))) \
-                            or ((mtg_source == 'mtgdecks') and (href.startswith(f'/{mtg_format}/') and (not href.startswith(f'/{mtg_format}/tournaments')) and (not href.startswith(f'/{mtg_format}/staples')) and (not href.startswith(f'/{mtg_format}/winrates')) and ((link.text not in events_before_date))))\
-                            or ((mtg_source == 'mtggoldfish') and (href.startswith('/tournament/'))):
+                        if ((mtg_source == 'mtgtop8') and href.startswith('event?e=') and href.endswith(f'={mtg_format.lower()[0:2]}') and ((link.text not in events_before_date))) \
+                            or ((mtg_source == 'mtgdecks') and href.startswith(f'/{mtg_format}/') and (not href.startswith(f'/{mtg_format}/tournaments')) and (not href.startswith(f'/{mtg_format}/staples')) and (not href.startswith(f'/{mtg_format}/winrates')) and ((link.text not in events_before_date)))\
+                            or ((mtg_source == 'mtggoldfish') and href.startswith('/tournament/')):
                                 events.append(href)
                 
                 deck_ranking_event = {}
@@ -246,7 +282,7 @@ def crawl_source(url, mtg_source, mtg_format, mtgdecks_date, algo):
                     progress.update(task, advance=period_progress / len(events))
 
                 # For MTGTOP8 and MTGDECKS: check if no more events
-                if ((mtg_source == 'mtgtop8') and (('<div class=Nav_PN_no>Next</div>' in body)))\
+                if ((mtg_source == 'mtgtop8') and ((('<div class=Nav_PN_no>Next</div>' in body) or event_before_date )))\
                     or ( (mtg_source == 'mtgdecks') and event_before_date ):
                     break
             
@@ -289,8 +325,8 @@ if __name__ == '__main__':
         action = 'store',
         default = 'exponential',
         help = 'Ranking algorithm (default: exponential):\n\
-    Linear: each TOP8 member gets 9-n pts, where n is the rank; or\n\
-    Exponential: TOP1 gets 8 pts, TOP2 gets 4 pts, TOP3-4 get 2 pts, TOP5-8 get 1 pt'
+    Linear: each TOP8 member gets ( (9-n) * nb_players / 8 ) pts, where n is the rank; or\n\
+    Exponential: TOP1 gets (8 * nb_players / 8) pts, TOP2 gets (4 * nb_players / 8) pts, TOP3-4 get (2 * nb_players / 8) pts, TOP5-8 get (1 * nb_players / 8) pts'
     )
 
     parser.add_argument(
@@ -346,7 +382,8 @@ if __name__ == '__main__':
             choice = Prompt.ask('Select time range:\n\
         1 Last 2 weeks\n\
         2 Last 2 months\n\
-        3 Since beginning of the year\n', choices=['1', '2', '3'])
+        3 Since beginning of the year\n\
+        4 Since specific date\n', choices=['1', '2', '3', '4'])
             try:
                 time_choice = int(choice)
                 if (time_choice < 1) or (time_choice > 4):
@@ -382,15 +419,32 @@ if __name__ == '__main__':
             mtggoldfishdate = f'{beginningoftheyear_str_enc}+-+{today_str_enc}'
             mtgdecks_date = datetime(today.year, 1, 1)
             time_str = 'since the beginning of the year'
+        case 4:
+            mtgtop8date = '44'
+            date_is_not_valid = True
+            while date_is_not_valid:
+                specific_date_str = Prompt.ask('Enter date (dd-mm-yyyy):\n')
+                try:
+                    specific_date = datetime.strptime(specific_date_str, '%d-%m-%Y')
+                    if specific_date > today:
+                        print('Date must be in the past.')
+                    else:
+                        date_is_not_valid = False
+                except Exception as e:
+                    print(e)
+                    print('Invalid date format, please use dd-mm-yyyy.')     
+            mtgdecks_date = specific_date
+            specific_date_str_enc = specific_date.strftime('%m-%d-%Y').replace('-', '%2F')
+            mtggoldfishdate = f'{specific_date_str_enc}+-+{today_str_enc}'
+            time_str = f'since {specific_date_str}'
 
     base_url = f'https://mtgtop8.com/format?f={mtg_format[0:2]}&meta={mtgtop8date}&cp='
 
     match mtg_source:
         case 'mtgdecks':
             base_url = f'https://mtgdecks.net/{mtg_format}/tournaments/page:'
-        case 'mtggoldfish': 
+        case 'mtggoldfish':
             base_url = f'https://www.mtggoldfish.com/tournament_searches/create?utf8=%E2%9C%93&tournament_search%5Bname%5D=&tournament_search%5Bformat%5D={mtg_format}&tournament_search%5Bdate_range%5D={mtggoldfishdate}&commit=Search&page='
-
 
     decks = crawl_source(base_url, mtg_source, mtg_format, mtgdecks_date, ranking_algo)
 

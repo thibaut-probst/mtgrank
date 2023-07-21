@@ -1,16 +1,16 @@
 # MTGRank
 ![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11-blue)  
 ---  
-A Magic: The Gathering format archetype ranking tool based on TOP 8 tournaments results.
+A Magic: The Gathering format archetype ranking tool based on TOP 8 tournaments results. Ranking is based on summing points obtained of TOP 8 archetypes in tournaments. Points are determined by position in TOP8 and number of players of the event.
 
 ## Features
 
 * Support of [MTGTOP8](https://mtgtop8.com), [MTGDECKS](https://mtgdecks.net) and [MTGGOLDFISH](https://www.mtggoldfish.com) as tournaments data sources.
 * Support of 3 formats: Modern, Legacy and Pioneer.
 * Support of 2 ranking algorithms:
-    * Linear: each TOP8 member gets 9-n pts where n is the rank ;
-    * Exponential: TOP1 gets 8 pts, TOP2 gets 4 pts, TOP3-4 get 2 pts, TOP5-8 get 1 pt 
-* Support of 3 possible time ranges for analysis: last 2 weeks, last 2 months and since beginning of the year.
+    * Linear: each TOP8 member gets ( (9-n) * nb_players / 8 ) pts, where n is the rank;
+    * Exponential: TOP1 gets (8 * nb_players / 8) pts, TOP2 gets (4 * nb_players / 8) pts, TOP3-4 get (2 * nb_players / 8) pts, TOP5-8 get (1 * nb_players / 8) pts
+* Support of 4 possible time ranges options for analysis: last 2 weeks, last 2 months, since beginning of the year or since specific date.
 
 ## Requirements
 
@@ -149,4 +149,38 @@ TOP 20 Pioneer archetypes over the last 2 weeks based on MTGDECKS and using expo
 18 - Red Deck Wins - 16 pts - 6 times TOP8
 19 - Mardu Sacrifice - 15 pts - 6 times TOP8
 20 - Jund Transmogrify - 14 pts - 3 times TOP8
+```
+```
+$ python3 mtgrank.py -d 
+Select time range:
+        1 Last 2 weeks
+        2 Last 2 months
+        3 Since beginning of the year
+        4 Since specific date
+ [1/2/3/4]: 4
+Enter date (dd-mm-yyyy):
+: 23-06-2023
+
+TOP 20 Modern archetypes since 23-06-2023 based on MTGTOP8 and using exponential ranking algorithm
+
+1 - 4cc - 1393 pts - 84 times TOP8
+2 - Rakdos - 1331 pts - 97 times TOP8
+3 - Amulet Titan - 887 pts - 34 times TOP8
+4 - Living End - 775 pts - 66 times TOP8
+5 - Yawgmoth Evolution - 727 pts - 34 times TOP8
+6 - Creativity - 709 pts - 48 times TOP8
+7 - Tron - 592 pts - 48 times TOP8
+8 - Hammer Time - 578 pts - 48 times TOP8
+9 - UR Murktide - 555 pts - 51 times TOP8
+10 - Burn - 267 pts - 30 times TOP8
+11 - Temur Cascade - 196 pts - 9 times TOP8
+12 - Mono Black Control - 174 pts - 16 times TOP8
+13 - Death's Shadow - 171 pts - 25 times TOP8
+14 - Cascade Crash - 127 pts - 25 times TOP8
+15 - Breach - 121 pts - 26 times TOP8
+16 - RDW - 108 pts - 8 times TOP8
+17 - UW Control - 92 pts - 16 times TOP8
+18 - Creatures Toolbox - 68 pts - 11 times TOP8
+19 - The Underworld Cookbook - 66 pts - 11 times TOP8
+20 - Merfolk - 63 pts - 14 times TOP8
 ```
