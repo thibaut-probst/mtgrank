@@ -205,10 +205,10 @@ def crawl_source(url, mtg_source, mtg_format, mtgdecks_date, algo):
                 # For MTGTOP8, check event dates
                 elif mtg_source == 'mtgtop8':
                     # Specific date provided, check event dates but also not to parse events over time range
+                    event_before_date = False
                     if '&meta=44' in url:
                         event_dates = compile('[0-9]+\/[0-9]+\/[0-9]+').findall(body) # Dates are within strong HTML elements
                         oldest_event_date = None
-                        event_before_date = False
                         for event_date_raw in event_dates: 
                             event_date = datetime.strptime(event_date_raw, '%d/%m/%y')
                             if event_date < mtgdecks_date:
