@@ -67,17 +67,17 @@ def crawl_event(url, mtg_source, mtg_format, algo):
                         (href.startswith(f'/{mtg_format}/') and (not href.startswith(f'/{mtg_format}/tournaments')) and (not href.startswith(f'/{mtg_format}/staples')) and (not href.startswith('/{mtg_format}/winrates'))) or\
                         (href.startswith('/deck/') and (not href.startswith('/deck/custom/')) and (not href.startswith('/deck/visual/'))):
                             # Merge similar archetypes
-                            if ('Creativi' in txt) or ('Idomitab...' in txt):
+                            if ('Creativi' in txt) or ('Idomitab' in txt):
                                 txt = 'Creativity'
                             elif 'Affinity' in txt:
                                 txt = 'Affinity'
-                            elif 'urktid' in txt:
+                            elif ('urktid' in txt) or ('Izzet Midrange' in txt):
                                 txt = 'UR Murktide'
                             elif 'Mill' in txt:
                                 txt = 'Mill'
                             elif 'Temur' in txt:
                                 txt = 'Temur Cascade'
-                            elif ('Omnath' in txt) or ('4c Control' in txt):
+                            elif ('Omnath' in txt) or ('4c Control' in txt) or ('Elemental' in txt):
                                 txt = '4cc'
                             elif ('Yawgmoth' in txt) or ('Chord Toolbox' in txt):
                                 txt = 'Yawgmoth Evolution'
@@ -91,6 +91,8 @@ def crawl_event(url, mtg_source, mtg_format, algo):
                                 txt = 'Rakdos'
                             elif 'Green Devotion' in txt:
                                 txt = 'Green Devotion'
+                            elif 'Death' in txt:
+                                txt = 'Grixis Death\'s Shadow'
                             decks.append(txt)
     
     # Ranking
