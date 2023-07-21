@@ -1,7 +1,7 @@
 # MTGRank
 ![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11-blue)  
 ---  
-A Magic: The Gathering format archetype ranking tool based on TOP 8 tournaments results. Ranking is based on summing points obtained of TOP 8 archetypes in tournaments. Points are determined by position in TOP8 and number of players of the event.
+A Magic: The Gathering format archetype ranking tool based on TOP 8 tournaments results. Ranking is based on summing points obtained of TOP 8 archetypes in tournaments. Points are determined by position in TOP 8 and number of players of the event.
 
 ## Features
 
