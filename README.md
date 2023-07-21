@@ -44,8 +44,8 @@ options:
                         Format (modern, legacy, pioneer ; default: modern)
   --algorithm ALGORITHM, -a ALGORITHM
                         Ranking algorithm (default: exponential):
-                            Linear: each TOP8 member gets 9-n pts, where n is the rank; or
-                            Exponential: TOP1 gets 8 pts, TOP2 gets 4 pts, TOP3-4 get 2 pts, TOP5-8 get 1 pt
+                            Linear: each TOP8 member gets ( (9-n) * nb_players / 8 ) pts, where n is the rank; or
+                            Exponential: TOP1 gets (8 * nb_players / 8) pts, TOP2 gets (4 * nb_players / 8) pts, TOP3-4 get (2 * nb_players / 8) pts, TOP5-8 get (1 * nb_players / 8) pts
   --top TOP, -t TOP     TOP ranking size (default: 20)
   --date, -d            Time range to be specified through a selection menu (default: last 2 weeks)
 ```
