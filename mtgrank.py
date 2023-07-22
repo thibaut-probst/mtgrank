@@ -87,9 +87,11 @@ def crawl_event(url, mtg_source, mtg_format, algo):
                                 txt = 'Tron'
                             elif 'Hammer' in txt:
                                 txt = 'Hammer Time'
+                            elif ('Humans' in txt) or ('Weenie White' in txt):
+                                txt = 'Humans'
                             elif ('Rakdos' in txt) or ('Rb Scam' in txt):
                                 txt = 'Rakdos'
-                            elif 'Green Devotion' in txt:
+                            elif ('Green Devotion' in txt) or ('Devotion to Green' in txt):
                                 txt = 'Green Devotion'
                             elif 'Death' in txt:
                                 txt = 'Grixis Death\'s Shadow'
