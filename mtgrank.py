@@ -81,7 +81,7 @@ def crawl_event(url, mtg_source, mtg_format, algo):
                                 txt = '4cc'
                             elif ('Yawgmoth' in txt) or ('Chord Toolbox' in txt):
                                 txt = 'Yawgmoth Evolution'
-                            elif 'Burn' in txt:
+                            elif ('Burn' in txt) or ('RDW' in txt) or ('Red Deck Wins' in txt):
                                 txt = 'Burn'
                             elif 'Tron' in txt:
                                 txt = 'Tron'
