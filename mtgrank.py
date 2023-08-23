@@ -67,19 +67,29 @@ def crawl_event(url, mtg_source, mtg_format, algo):
                         (href.startswith(f'/{mtg_format}/') and (not href.startswith(f'/{mtg_format}/tournaments')) and (not href.startswith(f'/{mtg_format}/staples')) and (not href.startswith('/{mtg_format}/winrates'))) or\
                         (href.startswith('/deck/') and (not href.startswith('/deck/custom/')) and (not href.startswith('/deck/visual/'))):
                             # Merge similar archetypes
+                            if mtg_format == 'modern':
+                                if ('Humans' in txt):
+                                    txt = 'Humans'
+                                elif ('WW' in txt) or ('Weenie White' in txt):
+                                    txt = 'Weenie White'
+                            else:
+                                if ('Humans' in txt) or ('WW' in txt) or ('Weenie White' in txt):
+                                    txt = 'Humans'
                             if ('Creativi' in txt) or ('Idomitab' in txt):
                                 txt = 'Creativity'
-                            elif 'Affinity' in txt:
+                            elif ('Affinity' in txt) or ('Afinity' in txt):
                                 txt = 'Affinity'
                             elif ('urktid' in txt) or ('Izzet Midrange' in txt):
                                 txt = 'UR Murktide'
                             elif 'Mill' in txt:
                                 txt = 'Mill'
-                            elif 'Temur' in txt:
+                            elif 'Goblin' in txt:
+                                txt = 'Goblins'
+                            elif ('Temur' in txt) or ('Cascade' in txt) or ('rhino' in txt) or ('Rhino' in txt):
                                 txt = 'Temur Cascade'
                             elif ('Omnath' in txt) or ('4c Control' in txt) or ('Elemental' in txt):
                                 txt = '4cc'
-                            elif ('Yawgmoth' in txt) or ('Chord Toolbox' in txt):
+                            elif ('Yawgmoth' in txt) or ('Chord Toolbox' in txt) or ('Creatures Toolbox' in txt):
                                 txt = 'Yawgmoth Evolution'
                             elif ('Burn' in txt) or ('RDW' in txt) or ('Red Deck Wins' in txt):
                                 txt = 'Burn'
@@ -87,8 +97,6 @@ def crawl_event(url, mtg_source, mtg_format, algo):
                                 txt = 'Tron'
                             elif 'Hammer' in txt:
                                 txt = 'Hammer Time'
-                            elif ('Humans' in txt) or ('Weenie White' in txt):
-                                txt = 'Humans'
                             elif ('Rakdos' in txt) or ('Rb Scam' in txt):
                                 txt = 'Rakdos'
                             elif ('Green Devotion' in txt) or ('Devotion to Green' in txt):
@@ -428,8 +436,8 @@ if __name__ == '__main__':
             choice = Prompt.ask('Select time range:\n\
         1 Last 2 weeks\n\
         2 Last 2 months\n\
-        3 Since beginning of the year\n\
-        4 Since specific date\n', choices=['1', '2', '3', '4'])
+        3 Since the beginning of the year\n\
+        4 Since a specific date\n', choices=['1', '2', '3', '4'])
             try:
                 time_choice = int(choice)
                 if (time_choice < 1) or (time_choice > 4):
