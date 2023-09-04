@@ -103,6 +103,8 @@ def crawl_event(url, mtg_source, mtg_format, algo):
                                 txt = 'Green Devotion'
                             elif 'Death' in txt:
                                 txt = 'Grixis Death\'s Shadow'
+                            elif 'Dimir Ring' in txt:
+                                txt = 'Dimir Control'
                             decks.append(txt)
     
     # Ranking
